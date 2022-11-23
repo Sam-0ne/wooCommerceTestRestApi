@@ -1,26 +1,25 @@
 /// <reference types="cypress" />
+import tokenFixture from '../../../fixtures/token.json'
+import productReviewFixture from '../../../fixtures/product-reviews.json'
+import { faker } from '@faker-js/faker/locale/pt_BR'
 
-Cypress.Commands.add('randomRating', function(min,max) {
-    return Math.floor(Math.random() * (max - min) + min)
-  })
-
-Cypress.Commands.add('getProductReviewsWooCommerce', function(token,max){
+Cypress.Commands.add('getProductReviewsWooCommerce', function (max) {
     cy.request({
         method: "GET",
         url: Cypress.env("wooCommerce") + Cypress.env("productReviews") + "?per_page=" + max,
         headers: {
-            Authorization: token
-        },failOnStatusCode: false
+            Authorization: tokenFixture.token
+        }, failOnStatusCode: false
     })
 })
 
 
-Cypress.Commands.add('createProductReviewWooCommerce', function(token, product_id, review, reviewer, reviewer_email, rating){
+Cypress.Commands.add('createProductReviewWooCommerce', function (product_id, review, reviewer, reviewer_email, rating) {
     cy.request({
         method: "POST",
         url: Cypress.env("wooCommerce") + Cypress.env("productReviews"),
         headers: {
-            Authorization: token,
+            Authorization: tokenFixture.token,
         },
         body: {
             "product_id": product_id,
@@ -28,36 +27,34 @@ Cypress.Commands.add('createProductReviewWooCommerce', function(token, product_i
             "reviewer": reviewer,
             "reviewer_email": reviewer_email,
             "rating": rating
-        },failOnStatusCode: false
+        }, failOnStatusCode: false
     })
 })
 
-Cypress.Commands.add('editProductReviewWooCommerce', function(token, product_id, review, reviewer, reviewer_email, rating, id){
+Cypress.Commands.add('editProductReviewWooCommerce', function (review_id, review, rating) {
     cy.request({
         method: "PUT",
-        url: Cypress.env("wooCommerce") + Cypress.env("productReviews") + '/' + id,
+        url: Cypress.env("wooCommerce") + Cypress.env("productReviews") + '/' + review_id,
         headers: {
-            Authorization: token,
+            Authorization: tokenFixture.token,
         },
         body: {
-            "product_id": product_id,
+
             "review": review,
-            "reviewer": reviewer,
-            "reviewer_email": reviewer_email,
             "rating": rating
         }
-        ,failOnStatusCode: false
+        , failOnStatusCode: false
     })
 })
 
-Cypress.Commands.add('deleteProductReviewWooCommerce', function(token, id){
-    var force=true
+Cypress.Commands.add('deleteProductReviewWooCommerce', function (id) {
+    var force = true
     cy.request({
         method: "DELETE",
-        url: Cypress.env("wooCommerce") + Cypress.env("productReviews") + '/' + id + "?force="+force,
+        url: Cypress.env("wooCommerce") + Cypress.env("productReviews") + '/' + id + "?force=" + force,
         headers: {
-            Authorization: token,
+            Authorization: tokenFixture.token,
         },
-        failOnStatusCode: false        
+        failOnStatusCode: false
     })
 })
